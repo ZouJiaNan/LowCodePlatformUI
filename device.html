@@ -1,0 +1,23 @@
+<div class="right-content">
+    <div>
+      <label for="input1">相机个数:</label>
+      <input id="input1" type="text" />
+    </div>
+    <div>
+      <label for="input2">链接页面:</label>
+      <input id="input2" type="text" />
+    </div>
+    <div>
+      <button onclick="addNavigation()">新增</button>
+    </div>
+  </div>
+  
+  <script>
+  function addNavigation() {
+    var input1 = document.getElementById("input1").value;
+    var input2 = document.getElementById("input2").value;
+    var message = { input1: input1, input2: input2,type:'tail_div' };
+    window.parent.postMessage(JSON.stringify(message), "*");
+  }
+  </script>
+  

@@ -1,0 +1,23 @@
+<div class="right-content">
+    <div>
+      <label for="input1">状态:</label>
+      <input id="input1" type="text" />
+    </div>
+    <div>
+      <label for="input2">颜色:</label>
+      <input id="input2" type="text" />
+    </div>
+    <div>
+      <button onclick="addStatusLight()">新增</button>
+    </div>
+  </div>
+  
+  <script>
+  function addStatusLight() {
+    var input1 = document.getElementById("input1").value;
+    var input2 = document.getElementById("input2").value;
+    var message = { input1: input1, input2: input2 ,type:'statusLight'};
+    window.parent.postMessage(JSON.stringify(message), "*");
+  }
+  </script>
+  

@@ -1,0 +1,36 @@
+<div class="right-content">
+  <div>
+    <label for="name">导航栏名称:</label>
+    <input id="name" type="text" />
+  </div>
+  <div>
+    <p>参数名1:<input id="input1_name" type="text" /></p>
+    <p>参数值1:<input id="input1_value" type="text" /></p>
+  </div>
+  <div>
+    <p>参数名2:<input id="input2_name" type="text" /></p>
+    <p>参数值2:<input id="input2_value" type="text" /></p>
+  </div>
+  <div>
+    <p>参数名3:<input id="input3_name" type="text" /></p>
+    <p>参数值3:<input id="input3_value" type="text" /></p>
+  </div>
+  <div>
+    <button onclick="addNavigation()">新增</button>
+  </div>
+</div>
+
+<script>
+  function addNavigation() {
+    var name = document.getElementById("name").value;
+    var input1_name = document.getElementById("input1_name").value;
+    var input1_value = document.getElementById("input1_value").value;
+    var input2_name = document.getElementById("input2_name").value;
+    var input2_value = document.getElementById("input2_value").value;
+    var input3_name = document.getElementById("input3_name").value;
+    var input3_value = document.getElementById("input3_value").value;
+
+    var message = { name:name,input1_name: input1_name, input1_value: input1_value,input2_name:input2_name,input2_value:input2_value,input3_name:input3_name,input3_value:input3_value, type: "navigation_mid" };
+    window.parent.postMessage(JSON.stringify(message), "*");
+  }
+</script>

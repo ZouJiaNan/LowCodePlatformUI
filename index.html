@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>首页</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        display: flex;
+        height: 100%;
+      }
+
+      .left {
+        flex-basis: 80%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .right {
+        flex-basis: 20%;
+        background-color: #d3d3d3;
+        padding: 20px;
+      }
+
+      .header_navigation_div {
+        height: 5%;
+        cursor: pointer; /* 添加鼠标指针样式*/
+        display: flex;
+      }
+
+      .mid_navigation_div {
+        height: 5%;
+        cursor: pointer; /* 添加鼠标指针样式*/
+        display: flex;
+      }
+
+      .head_div {
+        height: 25%;
+        display: flex;
+      }
+
+      .mid_div {
+        height: 30%;
+        display: flex;
+      }
+
+      .tail_div {
+        height: 35%;
+        display: flex;
+      }
+      .head_div_left {
+        width: 50%;
+        height: 100%;
+      }
+      .head_div_mid {
+        width: 30%;
+        height: 100%;
+      }
+      .head_div_right {
+        width: 20%;
+        height: 100%;
+      }
+      .right_header {
+        width: 100%;
+        height: 80%;
+      }
+      right_tail {
+        width: 100%;
+        height: 20%;
+      }
+      div {
+        border: 1px solid black; /* 设置边框的宽度、样式和颜色 */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">
+        <div class="header_navigation_div" id="header_navigation_div"></div>
+
+        <div class="head_div">
+          <div class="head_div_left"></div>
+          <div
+            class="head_div_mid"
+            id="head_div_mid">
+          </div>
+          <div
+            class="head_div_right"
+            id="head_div_right"
+            onclick="configStatusLight()"
+          ></div>
+        </div>
+
+        <div
+          class="mid_navigation_div"
+          id="mid_navigation_div"
+          onclick="configMidNavigation()"
+        ></div>
+
+        <div class="mid_div" id="mid_div"></div>
+        <div class="tail_div" id="tail_div" onclick="configTailDiv()"></div>
+      </div>
+      <div class="right" id="right">
+        <div class="right_header" id="right_header"></div>
+        <div class="right_tail" id="right_tail">
+          <button onclick="export_html()">导出</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      //每隔1秒执行一次函数
+      setInterval(function () {
+        var img = document.getElementById("img_0");
+        img.src = "D:\\IDEAWorkSpace\\GYXSServer\\demo.bmp";
+      }, 1000);
+
+      //监听器
+      window.addEventListener("message", receiveMessage, false);
+      window.addEventListener("message", addStatusLight, false);
+      window.addEventListener("message", addMidNavigation, false);
+      window.addEventListener("message", addDevice, false);
+      window.addEventListener("message", addFunctionButton, false);
+
+      function sendHttpRequest(data) {
+        var xhr = new XMLHttpRequest();
+        xhr.open(
+          "GET",
+          "http://127.0.0.1:8081/test/start?height=" + 2048,
+          true
+        );
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var response = xhr.responseText;
+            console.log(response);
+          }
+        };
+
+        xhr.send();
+      }
+
+      var click_header_navigation_div = function () {
+        document.getElementById("right_header").innerHTML =
+          '<object type="text/html" data="./navigation.html" style="width:100%; height:80%"></object>';
+      };
+      function click_head_div_mid() {
+        document.getElementById("right_header").innerHTML =
+          '<object type="text/html" data="./function.html" style="width:100%; height:80%"></object>';
+      }
+
+      function receiveMessage(event) {
+        var message = JSON.parse(event.data);
+        if (message.type === "navigation") {
+          var input1 = message.input1;
+          var input2 = message.input2;
+
+          // 创建一个新的按钮元素
+          var button = document.createElement("button");
+          button.textContent = input1;
+          // 将按钮元素添加到被单击的<div>元素中
+          var div = document.getElementById("header_navigation_div");
+          div.appendChild(button);
+        }
+      }
+
+      function configStatusLight() {
+        document.getElementById("right_header").innerHTML =
+          '<object type="text/html" data="./statusLight.html" style="width:100%; height:100%"></object>';
+      }
+
+      function configMidNavigation() {
+        document.getElementById("right_header").innerHTML =
+          '<object type="text/html" data="./navigation_mid.html" style="width:100%; height:100%"></object>';
+      }
+
+      function configTailDiv() {
+        document.getElementById("right_header").innerHTML =
+          '<object type="text/html" data="./device.html" style="width:100%; height:100%"></object>';
+      }
+
+      function addStatusLight(event) {
+        var message = JSON.parse(event.data);
+        if (message.type === "statusLight") {
+          var input1 = message.input1;
+          var input2 = message.input2;
+          var redDiv = document.createElement("div");
+          // 创建文本节点
+          var textNode = document.createTextNode(input1);
+
+          // 将文本节点添加到<div>元素中
+          redDiv.appendChild(textNode);
+          redDiv.style.backgroundColor = input2;
+          redDiv.style.width = "200px";
+          redDiv.style.height = "200px";
+          redDiv.style.margin = "20px";
+          var div = document.getElementById("head_div_right");
+          div.appendChild(redDiv);
+        }
+      }
+
+      // 创建一个空数组来存储键值对
+      var keyValueArray = [];
+
+      function addMidNavigation(event) {
+        var message = JSON.parse(event.data);
+        if (message.type === "navigation_mid") {
+          var name = message.name;
+          var input1_name = message.input1_name;
+          var input1_value = message.input1_value;
+          var input2_name = message.input2_name;
+          var input2_value = message.input2_value;
+          var input3_name = message.input3_name;
+          var input3_value = message.input3_value;
+          // 创建一个新的按钮元素
+          var button = document.createElement("button");
+          button.textContent = name;
+          button.id = "button_navigation_mid_" + name;
+
+          //存储对应button的JSON
+          // 创建一个对象表示键值对
+          var keyValueObject = {
+            name: button.id,
+            inputs: [
+              { name: input1_name, value: input1_value },
+              { name: input2_name, value: input2_value },
+              { name: input3_name, value: input3_value },
+            ],
+          };
+          // 将键值对对象添加到数组中
+          keyValueArray.push(keyValueObject);
+
+          //点击按钮的时候切换tab页
+          button.addEventListener("click", function () {
+            getValueAndIterate(this.id);
+          });
+          // 将按钮元素添加到被单击的<div>元素中
+          var div = document.getElementById("mid_navigation_div");
+          div.appendChild(button);
+        }
+      }
+
+      // 创建一个函数用于根据"name"获取数组中对应的值，并遍历该值中的键值对
+      function getValueAndIterate(name) {
+        console.log(name);
+        // 查找匹配的键值对对象
+        var matchingPair = keyValueArray.find(function (pair) {
+          return pair.name === name;
+        });
+
+        // 如果找到匹配的键值对对象
+        if (matchingPair) {
+          // 获取匹配的值
+          var value = matchingPair.inputs;
+
+          //选中参数展示区域
+          var mid_div = document.getElementById("mid_div");
+          //清空参数展示区域
+          while (mid_div.firstChild) {
+            mid_div.removeChild(mid_div.firstChild);
+          }
+          // 遍历值中的键值对
+          value.forEach(function (input) {
+            var inputName = input.name;
+            var inputValue = input.value;
+            //创建一个p标签用来装inputName
+            var p_name = document.createElement("p");
+            p_name.innerText = inputName;
+            var p_value = document.createElement("p");
+            p_value.innerText = inputValue;
+            //创建一个用来装p标签的div
+            var p_div = document.createElement("div");
+            p_div.style.width = "30%";
+            p_div.appendChild(p_name);
+            p_div.appendChild(p_value);
+            //先参数展示区域添加
+            mid_div.appendChild(p_div);
+          });
+        } else {
+          console.log("No matching pair found for name:", name);
+        }
+      }
+
+      function addDevice(event) {
+        var message = JSON.parse(event.data);
+        if (message.type === "tail_div") {
+          var input1 = message.input1;
+          var input2 = message.input2;
+          for (var i = 0; i < input1; i++) {
+            var img = document.createElement("img");
+            img.style.width = "200px";
+            img.style.height = "200px";
+            img.style.margin = "20px";
+            img.id = "img_" + i;
+            // img.src="D:\\IDEAWorkSpace\\GYXSServer\\demo.bmp";
+            // 绑定点击事件监听器
+            img.addEventListener("click", function () {
+              console.log("hello");
+            });
+            var div = document.getElementById("tail_div");
+            div.appendChild(img);
+          }
+        }
+      }
+
+      function addFunctionButton(event) {
+        var message = JSON.parse(event.data);
+        if (message.type === "function") {
+          var input1 = message.input1;
+          var input2 = message.input2;
+          var button = document.createElement("button");
+          button.textContent = input1;
+          var div = document.getElementById("head_div_mid");
+          div.appendChild(button);
+
+          button.addEventListener("click", function () {
+            // 在此处编写按钮点击事件的逻辑
+            console.log("Button clicked!");
+            sendHttpRequest(input2);
+            var img = document.getElementById("img_0");
+            img.src = "D:\\IDEAWorkSpace\\GYXSServer\\demo.bmp";
+          });
+        }
+      }
+
+      function export_html() {
+        //导出前先移除各个div的点击事件
+        header_navigation_div_RemoveEvent();
+        head_div_mid_RemoveEvent()
+
+        // 隐藏右侧容器
+        var rightContainer = document.querySelector(".right");
+        rightContainer.style.display = "none";
+
+        // 将左侧容器铺满页面
+        var leftContainer = document.querySelector(".left");
+        leftContainer.style.flexGrow = 1;
+
+        var entireDOM = document.documentElement; // 获取整个页面的DOM树
+
+        // 将DOM结构转换为字符串
+        var domString = new XMLSerializer().serializeToString(entireDOM);
+
+        // 创建Blob对象
+        var blob = new Blob([domString], { type: "text/html" });
+
+        // 创建下载链接
+        var downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = "result.html"; // 设置下载文件的名称
+
+        // 模拟点击下载链接
+        downloadLink.click();
+
+        // 还原右侧容器的内容和样式
+        rightContainer.style.display = "";
+
+        // 还原左侧容器的样式
+        leftContainer.style.flexGrow = "";
+
+        //导出完成后给各个DOM再重新加上事件
+        header_navigation_div_AddEvent();
+        head_div_mid_AddEvent();
+      }
+
+      //添加事件
+      function header_navigation_div_AddEvent() {
+        var element = document.getElementById("header_navigation_div");
+        element.addEventListener("click", click_header_navigation_div);
+      }
+
+      function head_div_mid_AddEvent(){
+        var element = document.getElementById("head_div_mid");
+        element.addEventListener("click", click_head_div_mid);
+      }
+
+      //移除事件
+      function header_navigation_div_RemoveEvent() {
+        var element = document.getElementById("header_navigation_div");
+        element.removeEventListener("click", click_header_navigation_div);
+      }
+      function head_div_mid_RemoveEvent() {
+        var element = document.getElementById("head_div_mid");
+        element.removeEventListener("click", click_head_div_mid);
+      }
+
+      //调用添加事件的方法，为各个DOM添加事件
+      header_navigation_div_AddEvent();
+      head_div_mid_AddEvent();
+    </script>
+  </body>
+</html>
